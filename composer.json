@@ -1,5 +1,5 @@
 {
-    "name": "lbhurtado/emi-core",
+    "name": "3neti/emi-core",
     "description": "Provider-agnostic EMI domain: contracts, enums, models, DTOs, events",
     "type": "library",
     "license": "proprietary",
