@@ -2,6 +2,8 @@
 
 namespace LBHurtado\EmiCore;
 
+use LBHurtado\EmiCore\Contracts\BankRegistryContract;
+use LBHurtado\EmiCore\Support\NullBankRegistry;
 use Illuminate\Support\ServiceProvider;
 
 class EmiCoreServiceProvider extends ServiceProvider
@@ -12,6 +14,12 @@ class EmiCoreServiceProvider extends ServiceProvider
             __DIR__.'/../config/emi-core.php',
             'emi-core'
         );
+
+        /**
+         * Safe default so downstream packages can type against the contract
+         * without requiring a concrete provider package to be installed.
+         */
+        $this->app->singleton(BankRegistryContract::class, NullBankRegistry::class);
     }
 
     public function boot(): void
