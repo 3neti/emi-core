@@ -19,7 +19,7 @@ class EmiCoreServiceProvider extends ServiceProvider
          * Safe default so downstream packages can type against the contract
          * without requiring a concrete provider package to be installed.
          */
-        $this->app->singleton(BankRegistryContract::class, NullBankRegistry::class);
+        $this->app->bindIf(BankRegistryContract::class, NullBankRegistry::class);
     }
 
     public function boot(): void
