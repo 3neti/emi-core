@@ -5,6 +5,7 @@ namespace LBHurtado\EmiCore\Tests;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use LBHurtado\EmiCore\EmiCoreServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Spatie\LaravelData\LaravelDataServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -21,12 +22,13 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             EmiCoreServiceProvider::class,
-            \Spatie\LaravelData\LaravelDataServiceProvider::class,
+            LaravelDataServiceProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app): void
     {
+        config()->set('app.key', str_repeat('a', 32));
         config()->set('data.validation_strategy', 'always');
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
