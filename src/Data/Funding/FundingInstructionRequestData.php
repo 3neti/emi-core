@@ -20,5 +20,6 @@ class FundingInstructionRequestData extends Data
         public string $accountReference,
         public ?DateTimeImmutable $expiresAt = null,
         public array $metadata = [],
+        public ?FundingDestinationData $destination = null,
     ) {}
 }

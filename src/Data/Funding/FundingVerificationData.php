@@ -16,5 +16,6 @@ class FundingVerificationData extends Data
         public ?string $providerRequestId = null,
         public ?string $fundingAddress = null,
         public ?int $webhookReceiptId = null,
+        public ?FundingDestinationData $destination = null,
     ) {}
 }
