@@ -30,5 +30,6 @@ class ProviderFundingObservationData extends Data
         public ?DateTimeImmutable $settledAt = null,
         public ?int $webhookReceiptId = null,
         public array $metadata = [],
+        public ?ProviderPayerIdentityData $payerIdentity = null,
     ) {}
 }
