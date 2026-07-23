@@ -21,5 +21,6 @@ class FundingInstructionsData extends Data
         public ?string $fundingAddress = null,
         public ?string $actionUrl = null,
         public array $displayData = [],
+        public ?FundingQrCodeData $qrCode = null,
     ) {}
 }
