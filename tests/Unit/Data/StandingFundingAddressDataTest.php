@@ -24,8 +24,30 @@ it('serializes the three address purposes without provider-specific fields', fun
         'purpose' => $purpose->value,
         'currency' => 'PHP',
         'destination' => null,
+        'routingReference' => null,
+        'derivationCounter' => 0,
+        'existingFundingAddress' => null,
     ]);
 })->with(FundingAddressPurpose::cases());
+
+it('carries an optional routing reference and persisted address without making them provider authority', function () {
+    $request = new StandingFundingAddressRequestData(
+        ownerReference: 'App\\Models\\User:5',
+        accountReference: 'wallet:01JACCOUNT',
+        purpose: FundingAddressPurpose::AccountFunding,
+        currency: 'PHP',
+        routingReference: '09173011987',
+        derivationCounter: 2,
+        existingFundingAddress: '9150009173011987',
+    );
+
+    expect($request->toArray())->toMatchArray([
+        'routingReference' => '09173011987',
+        'derivationCounter' => 2,
+        'existingFundingAddress' => '9150009173011987',
+    ])->and($request->toArray())
+        ->not->toHaveKeys(['walletBalance', 'automaticCreditEnabled', 'settled']);
+});
 
 it('carries reusable qr instructions without granting settlement authority', function () {
     $address = new StandingFundingAddressData(

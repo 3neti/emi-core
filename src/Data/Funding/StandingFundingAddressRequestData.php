@@ -15,5 +15,8 @@ class StandingFundingAddressRequestData extends Data
         public FundingAddressPurpose $purpose,
         public string $currency,
         public ?FundingDestinationData $destination = null,
+        public ?string $routingReference = null,
+        public int $derivationCounter = 0,
+        public ?string $existingFundingAddress = null,
     ) {}
 }
