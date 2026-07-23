@@ -15,6 +15,8 @@ use LBHurtado\EmiCore\Data\Funding\WebhookAuthenticationData;
 
 interface FundingProviderAdapter
 {
+    public function providerCode(): string;
+
     public function createFundingInstructions(FundingInstructionRequestData $request): FundingInstructionsData;
 
     public function authenticateWebhook(ProviderWebhookRequestData $request): WebhookAuthenticationData;

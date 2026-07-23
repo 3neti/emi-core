@@ -15,7 +15,9 @@ use LBHurtado\EmiCore\Data\Funding\WebhookAuthenticationData;
 it('defines a provider-neutral funding boundary without a balance credit method', function () {
     $contract = new ReflectionClass(FundingProviderAdapter::class);
 
-    expect($contract->getMethod('createFundingInstructions')->getParameters()[0]->getType()?->getName())
+    expect($contract->getMethod('providerCode')->getReturnType()?->getName())
+        ->toBe('string')
+        ->and($contract->getMethod('createFundingInstructions')->getParameters()[0]->getType()?->getName())
         ->toBe(FundingInstructionRequestData::class)
         ->and($contract->getMethod('createFundingInstructions')->getReturnType()?->getName())
         ->toBe(FundingInstructionsData::class)
