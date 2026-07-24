@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LBHurtado\EmiCore\Actions\Funding;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -69,8 +71,8 @@ class RecordProviderFundingObservation
                     'net_amount_minor' => $observation->netAmountMinor,
                     'currency' => $currency,
                     'provider_status' => $providerStatus,
-                    'occurred_at' => $observation->occurredAt,
-                    'settled_at' => $observation->settledAt,
+                    'occurred_at' => $this->utc($observation->occurredAt),
+                    'settled_at' => $this->utc($observation->settledAt),
                     'verification_source' => $verificationSource,
                     'webhook_receipt_id' => $observation->webhookReceiptId,
                     'payload_hash' => $payloadHash,
@@ -116,6 +118,11 @@ class RecordProviderFundingObservation
         $normalized = trim($value);
 
         return $normalized === '' ? null : $normalized;
+    }
+
+    private function utc(?DateTimeImmutable $timestamp): ?DateTimeImmutable
+    {
+        return $timestamp?->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**

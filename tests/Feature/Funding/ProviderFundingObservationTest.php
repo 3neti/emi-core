@@ -42,7 +42,13 @@ it('records append-only normalized funding observations idempotently', function 
         ->and($first->currency)->toBe('PHP')
         ->and($first->gross_amount_minor)->toBe(100_00)
         ->and($first->fee_amount_minor)->toBe(50)
-        ->and($first->net_amount_minor)->toBe(99_50);
+        ->and($first->net_amount_minor)->toBe(99_50)
+        ->and($first->getRawOriginal('occurred_at'))->toBe('2026-07-23 01:05:00')
+        ->and($first->getRawOriginal('settled_at'))->toBe('2026-07-23 01:06:00')
+        ->and($first->occurredAtInstant()?->toRfc3339String())
+        ->toBe('2026-07-23T01:05:00+00:00')
+        ->and($first->settledAtInstant()?->toRfc3339String())
+        ->toBe('2026-07-23T01:06:00+00:00');
 });
 
 it('preserves provider state transitions as separate observations', function () {
