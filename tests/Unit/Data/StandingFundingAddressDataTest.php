@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use LBHurtado\EmiCore\Data\Funding\FundingQrCodeData;
+use LBHurtado\EmiCore\Data\Funding\FundingQrMerchantData;
 use LBHurtado\EmiCore\Data\Funding\StandingFundingAddressData;
 use LBHurtado\EmiCore\Data\Funding\StandingFundingAddressRequestData;
 use LBHurtado\EmiCore\Data\Funding\StandingFundingObservationRequestData;
@@ -27,6 +28,7 @@ it('serializes the three address purposes without provider-specific fields', fun
         'routingReference' => null,
         'derivationCounter' => 0,
         'existingFundingAddress' => null,
+        'qrMerchant' => null,
     ]);
 })->with(FundingAddressPurpose::cases());
 
@@ -47,6 +49,32 @@ it('carries an optional routing reference and persisted address without making t
         'existingFundingAddress' => '9150009173011987',
     ])->and($request->toArray())
         ->not->toHaveKeys(['walletBalance', 'automaticCreditEnabled', 'settled']);
+});
+
+it('carries optional provider-neutral merchant presentation metadata', function () {
+    $request = new StandingFundingAddressRequestData(
+        ownerReference: 'App\\Models\\User:5',
+        accountReference: 'wallet:01JACCOUNT',
+        purpose: FundingAddressPurpose::AccountFunding,
+        currency: 'PHP',
+        qrMerchant: new FundingQrMerchantData(
+            displayName: 'Lester Store - Manila',
+            city: 'Manila',
+            categoryCode: '0000',
+            profileReference: 'merchant:01JMERCHANT',
+            profileFingerprint: 'sha256:merchant-profile',
+        ),
+    );
+
+    expect($request->toArray()['qrMerchant'])->toBe([
+        'displayName' => 'Lester Store - Manila',
+        'city' => 'Manila',
+        'categoryCode' => '0000',
+        'profileReference' => 'merchant:01JMERCHANT',
+        'profileFingerprint' => 'sha256:merchant-profile',
+        'metadataVersion' => 'funding-qr-merchant-v1',
+    ])->and($request->toArray())
+        ->not->toHaveKeys(['destinationAccount', 'walletBalance', 'settled']);
 });
 
 it('carries reusable qr instructions without granting settlement authority', function () {
