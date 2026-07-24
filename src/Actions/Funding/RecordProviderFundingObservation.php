@@ -23,6 +23,7 @@ class RecordProviderFundingObservation
         $verificationSource = $this->requiredLowercase($observation->verificationSource, 'Verification source');
         $currency = strtoupper($this->required($observation->currency, 'Currency'));
         $payloadHash = strtolower($this->required($observation->payloadHash, 'Payload hash'));
+        $normalizationVersion = $this->normalizationVersion($observation->metadata);
 
         if (strlen($currency) !== 3) {
             throw new InvalidArgumentException('Currency must be a three-letter code.');
@@ -50,6 +51,7 @@ class RecordProviderFundingObservation
             $providerTransactionId,
             $providerStatus,
             $payloadHash,
+            $normalizationVersion,
         ]));
 
         try {
@@ -114,5 +116,26 @@ class RecordProviderFundingObservation
         $normalized = trim($value);
 
         return $normalized === '' ? null : $normalized;
+    }
+
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
+    private function normalizationVersion(array $metadata): string
+    {
+        $version = data_get($metadata, 'normalization_version');
+
+        if ($version === null) {
+            return '';
+        }
+
+        if (! is_string($version)
+            || preg_match('/\A[a-z0-9][a-z0-9._-]{0,63}\z/', $version) !== 1) {
+            throw new InvalidArgumentException(
+                'Normalization version must be a safe lowercase identifier.',
+            );
+        }
+
+        return $version;
     }
 }

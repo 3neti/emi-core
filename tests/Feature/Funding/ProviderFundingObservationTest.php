@@ -58,6 +58,42 @@ it('preserves provider state transitions as separate observations', function () 
         ->and(ProviderFundingObservation::query()->count())->toBe(2);
 });
 
+it('preserves corrected normalization revisions as separate immutable observations', function () {
+    $record = app(RecordProviderFundingObservation::class);
+
+    $legacy = $record->handle(settledObservation());
+    $corrected = $record->handle(settledObservation([
+        'feeAmountMinor' => 0,
+        'netAmountMinor' => 100_00,
+        'metadata' => [
+            'rail' => 'instapay',
+            'normalization_version' => 'netbank-standing-credit-v2',
+        ],
+    ]));
+    $retry = $record->handle(settledObservation([
+        'feeAmountMinor' => 0,
+        'netAmountMinor' => 100_00,
+        'metadata' => [
+            'rail' => 'instapay',
+            'normalization_version' => 'netbank-standing-credit-v2',
+        ],
+    ]));
+
+    expect($corrected->getKey())->not->toBe($legacy->getKey())
+        ->and($retry->getKey())->toBe($corrected->getKey())
+        ->and($legacy->fee_amount_minor)->toBe(50)
+        ->and($corrected->fee_amount_minor)->toBe(0)
+        ->and(ProviderFundingObservation::query()->count())->toBe(2);
+});
+
+it('rejects unsafe normalization revision identifiers', function () {
+    expect(fn () => app(RecordProviderFundingObservation::class)->handle(
+        settledObservation([
+            'metadata' => ['normalization_version' => 'NetBank V2'],
+        ]),
+    ))->toThrow(InvalidArgumentException::class, 'safe lowercase identifier');
+});
+
 it('makes normalized observations immutable', function () {
     $observation = app(RecordProviderFundingObservation::class)
         ->handle(settledObservation());
