@@ -2,9 +2,11 @@
 
 namespace LBHurtado\EmiCore;
 
-use LBHurtado\EmiCore\Contracts\BankRegistryContract;
-use LBHurtado\EmiCore\Support\NullBankRegistry;
 use Illuminate\Support\ServiceProvider;
+use LBHurtado\EmiCore\Contracts\BankRegistryContract;
+use LBHurtado\EmiCore\Contracts\SettlementProviderRegistryContract;
+use LBHurtado\EmiCore\Support\NullBankRegistry;
+use LBHurtado\EmiCore\Support\SettlementProviderRegistry;
 
 class EmiCoreServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,13 @@ class EmiCoreServiceProvider extends ServiceProvider
          * without requiring a concrete provider package to be installed.
          */
         $this->app->bindIf(BankRegistryContract::class, NullBankRegistry::class);
+
+        $this->app->singleton(
+            SettlementProviderRegistryContract::class,
+            fn ($app): SettlementProviderRegistry => new SettlementProviderRegistry(
+                $app->tagged('emi.settlement-providers'),
+            ),
+        );
     }
 
     public function boot(): void
