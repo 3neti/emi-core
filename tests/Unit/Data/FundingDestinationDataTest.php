@@ -37,10 +37,16 @@ it('carries an immutable provider funding destination through instruction and ve
         expectedAmountMinor: 2500,
         currency: 'PHP',
         destination: $destination,
+        observedAfter: new DateTimeImmutable('2026-07-27T03:00:00+00:00'),
+        observedBefore: new DateTimeImmutable('2026-07-27T03:15:00+00:00'),
     );
 
     expect($instruction->destination)->toBe($destination)
         ->and($verification->destination)->toBe($destination)
+        ->and($verification->observedAfter?->format(DATE_ATOM))
+        ->toBe('2026-07-27T03:00:00+00:00')
+        ->and($verification->observedBefore?->format(DATE_ATOM))
+        ->toBe('2026-07-27T03:15:00+00:00')
         ->and($destination->routingCredential)->toBe('write-only-token')
         ->and($destination->metadata)->toBe([]);
 });
@@ -62,5 +68,7 @@ it('keeps funding destination optional for backwards compatibility', function ()
     );
 
     expect($instruction->destination)->toBeNull()
-        ->and($verification->destination)->toBeNull();
+        ->and($verification->destination)->toBeNull()
+        ->and($verification->observedAfter)->toBeNull()
+        ->and($verification->observedBefore)->toBeNull();
 });

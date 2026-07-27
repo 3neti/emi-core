@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LBHurtado\EmiCore\Data\Funding;
 
+use DateTimeImmutable;
 use Spatie\LaravelData\Data;
 
 class FundingVerificationData extends Data
@@ -17,5 +18,7 @@ class FundingVerificationData extends Data
         public ?string $fundingAddress = null,
         public ?int $webhookReceiptId = null,
         public ?FundingDestinationData $destination = null,
+        public ?DateTimeImmutable $observedAfter = null,
+        public ?DateTimeImmutable $observedBefore = null,
     ) {}
 }
