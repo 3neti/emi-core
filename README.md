@@ -147,6 +147,8 @@ composer test
 ```
 
 The supported compatibility matrix is PHP 8.3 and 8.4 on Laravel 12 and 13.
+Consumers upgrading from the `1.x` model surface should review
+[UPGRADING.md](UPGRADING.md) before adopting the settlement kernel.
 
 ## License
 

@@ -65,5 +65,8 @@ jobs:
       - name: Run package tests
         run: composer test
 
+      - name: Audit dependencies
+        run: composer audit
+
       - name: Audit resolved dependencies
         run: composer audit
