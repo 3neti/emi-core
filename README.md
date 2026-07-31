@@ -1,4 +1,4 @@
-# lbhurtado/emi-core
+# 3neti/emi-core
 
 Provider-agnostic EMI (Electronic Money Issuer) domain package for Laravel. Defines the shared contracts, enums, models, and events that any EMI provider adapter can implement.
 
@@ -10,7 +10,7 @@ Provider-agnostic EMI (Electronic Money Issuer) domain package for Laravel. Defi
 ## Installation
 
 ```bash
-composer require lbhurtado/emi-core
+composer require 3neti/emi-core
 ```
 
 The package auto-discovers its service provider. Publish the config if needed:
@@ -72,9 +72,22 @@ All models use enum casts and proper Eloquent relationships:
 ## Testing
 
 ```bash
-# From the monorepo host
-composer test:emi-core
+composer install
+composer test
 ```
+
+The supported compatibility matrix is PHP 8.3 and 8.4 on Laravel 12 and 13.
+
+### Provider live preflight
+
+Provider adapters may implement `ProviderLivePreflightProbe` to return a
+sanitized readiness result and an optional authoritative balance observation.
+`ProviderLivePreflightFailureCode` distinguishes DNS, timeout, TLS,
+authentication, endpoint, response, and provider-availability failures without
+exposing credentials or raw provider responses.
+
+This additive 1.x contract exists so consumers can fail closed before
+performing settlement work. It does not authorize funding or balance mutation.
 
 ## License
 
