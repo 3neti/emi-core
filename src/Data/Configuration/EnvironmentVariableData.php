@@ -16,6 +16,7 @@ final readonly class EnvironmentVariableData
         public string $key,
         public string $description,
         public string $category,
+        public ?string $configPath = null,
         public ?string $safeExample = null,
         public bool $secret = false,
         public bool $required = false,
@@ -29,6 +30,12 @@ final readonly class EnvironmentVariableData
         if (trim($this->description) === '' || trim($this->category) === '') {
             throw new InvalidArgumentException(
                 "Environment descriptor [{$this->key}] requires a description and category.",
+            );
+        }
+
+        if ($this->configPath !== null && trim($this->configPath) === '') {
+            throw new InvalidArgumentException(
+                "Environment descriptor [{$this->key}] has an invalid config path.",
             );
         }
 

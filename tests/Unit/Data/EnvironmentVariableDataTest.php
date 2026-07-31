@@ -9,6 +9,7 @@ it('evaluates environment requirements from profiles and provider codes', functi
         key: 'NETBANK_API_TOKEN',
         description: 'Provider API token.',
         category: 'NetBank',
+        configPath: 'netbank.api.token',
         secret: true,
         requiredForProfiles: ['netbank'],
         requiredForProviders: ['netbank'],
@@ -17,6 +18,8 @@ it('evaluates environment requirements from profiles and provider codes', functi
     expect($variable->isRequired('netbank', []))->toBeTrue()
         ->and($variable->isRequired('custom', ['netbank']))->toBeTrue()
         ->and($variable->isRequired('development', []))->toBeFalse();
+
+    expect($variable->configPath)->toBe('netbank.api.token');
 });
 
 it('rejects unsafe secret examples', function (): void {
