@@ -10,6 +10,18 @@ use LBHurtado\EmiCore\Support\SettlementProviderRegistry;
 
 class EmiCoreServiceProvider extends ServiceProvider
 {
+    /**
+     * Funding evidence tables are safe to auto-load and are required by
+     * downstream settlement packages during an ordinary Laravel migration.
+     *
+     * @var list<string>
+     */
+    private const AUTO_LOADED_MIGRATIONS = [
+        '2025_01_01_000008_create_webhook_receipts_table.php',
+        '2026_07_23_085518_create_provider_funding_observations_table.php',
+        '2026_07_23_085520_harden_emi_webhook_receipts_for_funding_evidence.php',
+    ];
+
     public function register(): void
     {
         $this->mergeConfigFrom(
@@ -33,8 +45,13 @@ class EmiCoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadMigrationsFrom(array_map(
+            static fn (string $migration): string => __DIR__.'/../database/migrations/'.$migration,
+            self::AUTO_LOADED_MIGRATIONS,
+        ));
+
         // Migrations are publishable, not auto-loaded, to avoid table conflicts
-        // (e.g. emi-core 'wallets' vs Bavix Wallet 'wallets')
+        // for the provider-account ledger (e.g. emi-core 'wallets' vs Bavix Wallet 'wallets').
         $this->publishes([
             __DIR__.'/../database/migrations/' => database_path('migrations'),
         ], 'emi-core-migrations');

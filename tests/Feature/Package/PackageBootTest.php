@@ -13,6 +13,23 @@ it('loads the emi-core config', function () {
         ->toBeNull('default_provider should be null — host app sets it');
 });
 
+it('auto-loads only the funding evidence migrations required by settlement packages', function () {
+    $migrationPaths = array_map(
+        static fn (string $path): string|false => realpath($path),
+        app('migrator')->paths(),
+    );
+
+    expect($migrationPaths)
+        ->toContain(
+            realpath(__DIR__.'/../../../database/migrations/2025_01_01_000008_create_webhook_receipts_table.php'),
+            realpath(__DIR__.'/../../../database/migrations/2026_07_23_085518_create_provider_funding_observations_table.php'),
+            realpath(__DIR__.'/../../../database/migrations/2026_07_23_085520_harden_emi_webhook_receipts_for_funding_evidence.php'),
+        )
+        ->not->toContain(
+            realpath(__DIR__.'/../../../database/migrations/2025_01_01_000002_create_wallets_table.php'),
+        );
+});
+
 it('can create a provider account', function () {
     $account = ProviderAccount::create([
         'provider_code' => 'paynamics_constellation',
