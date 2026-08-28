@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use LBHurtado\EmiCore\Data\Funding\FundingDestinationData;
 use LBHurtado\EmiCore\Data\Funding\FundingInstructionRequestData;
+use LBHurtado\EmiCore\Data\Funding\FundingQrMerchantData;
 use LBHurtado\EmiCore\Data\Funding\FundingVerificationData;
 
 it('carries an immutable provider funding destination through instruction and verification requests', function () {
@@ -29,6 +30,14 @@ it('carries an immutable provider funding destination through instruction and ve
         currency: 'PHP',
         accountReference: 'wallet:01JABC',
         destination: $destination,
+        merchant: new FundingQrMerchantData(
+            displayName: 'Three Neti',
+            city: 'Makati',
+            categoryCode: '5999',
+            profileReference: 'merchant:01JABC',
+            profileFingerprint: hash('sha256', 'three-neti|makati'),
+            metadataVersion: 'funding-qr-merchant-v1',
+        ),
     );
 
     $verification = new FundingVerificationData(
@@ -42,6 +51,8 @@ it('carries an immutable provider funding destination through instruction and ve
     );
 
     expect($instruction->destination)->toBe($destination)
+        ->and($instruction->merchant?->displayName)->toBe('Three Neti')
+        ->and($instruction->merchant?->city)->toBe('Makati')
         ->and($verification->destination)->toBe($destination)
         ->and($verification->observedAfter?->format(DATE_ATOM))
         ->toBe('2026-07-27T03:00:00+00:00')
@@ -68,6 +79,7 @@ it('keeps funding destination optional for backwards compatibility', function ()
     );
 
     expect($instruction->destination)->toBeNull()
+        ->and($instruction->merchant)->toBeNull()
         ->and($verification->destination)->toBeNull()
         ->and($verification->observedAfter)->toBeNull()
         ->and($verification->observedBefore)->toBeNull();

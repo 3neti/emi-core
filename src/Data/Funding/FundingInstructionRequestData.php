@@ -21,5 +21,6 @@ class FundingInstructionRequestData extends Data
         public ?DateTimeImmutable $expiresAt = null,
         public array $metadata = [],
         public ?FundingDestinationData $destination = null,
+        public ?FundingQrMerchantData $merchant = null,
     ) {}
 }
