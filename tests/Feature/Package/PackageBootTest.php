@@ -23,6 +23,7 @@ it('auto-loads only the funding evidence migrations required by settlement packa
         ->toContain(
             realpath(__DIR__.'/../../../database/migrations/2025_01_01_000008_create_webhook_receipts_table.php'),
             realpath(__DIR__.'/../../../database/migrations/2026_07_23_085518_create_provider_funding_observations_table.php'),
+            realpath(__DIR__.'/../../../database/migrations/2026_09_23_000001_add_payer_identity_to_provider_funding_observations.php'),
             realpath(__DIR__.'/../../../database/migrations/2026_07_23_085520_harden_emi_webhook_receipts_for_funding_evidence.php'),
         )
         ->not->toContain(

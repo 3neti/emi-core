@@ -26,6 +26,7 @@ class RecordProviderFundingObservation
         $currency = strtoupper($this->required($observation->currency, 'Currency'));
         $payloadHash = strtolower($this->required($observation->payloadHash, 'Payload hash'));
         $normalizationVersion = $this->normalizationVersion($observation->metadata);
+        $payerIdentity = $observation->payerIdentity;
 
         if (strlen($currency) !== 3) {
             throw new InvalidArgumentException('Currency must be a three-letter code.');
@@ -77,6 +78,34 @@ class RecordProviderFundingObservation
                     'webhook_receipt_id' => $observation->webhookReceiptId,
                     'payload_hash' => $payloadHash,
                     'metadata' => $observation->metadata,
+                    'payer_name_ciphertext' => $this->limitedOptional(
+                        $payerIdentity?->name,
+                        'Payer name',
+                        255,
+                    ),
+                    'payer_account_ciphertext' => $this->limitedOptional(
+                        $payerIdentity?->accountNumber,
+                        'Payer account number',
+                        191,
+                    ),
+                    'payer_institution_ciphertext' => $this->limitedOptional(
+                        $payerIdentity?->institutionCode,
+                        'Payer institution code',
+                        64,
+                    ),
+                    'payer_mobile_ciphertext' => $this->limitedOptional(
+                        $payerIdentity?->mobile,
+                        'Payer mobile',
+                        32,
+                    ),
+                    'payer_identity_verification_source' => $payerIdentity === null
+                        ? null
+                        : $this->limitedRequired(
+                            $payerIdentity->verificationSource,
+                            'Payer identity verification source',
+                            64,
+                        ),
+                    'payer_identity_provider_verified' => $payerIdentity?->providerVerified ?? false,
                 ]),
                 3,
             );
@@ -118,6 +147,28 @@ class RecordProviderFundingObservation
         $normalized = trim($value);
 
         return $normalized === '' ? null : $normalized;
+    }
+
+    private function limitedOptional(?string $value, string $field, int $maximum): ?string
+    {
+        $normalized = $this->optional($value);
+
+        if ($normalized !== null && mb_strlen($normalized) > $maximum) {
+            throw new InvalidArgumentException("{$field} exceeds {$maximum} characters.");
+        }
+
+        return $normalized;
+    }
+
+    private function limitedRequired(string $value, string $field, int $maximum): string
+    {
+        $normalized = $this->requiredLowercase($value, $field);
+
+        if (mb_strlen($normalized) > $maximum) {
+            throw new InvalidArgumentException("{$field} exceeds {$maximum} characters.");
+        }
+
+        return $normalized;
     }
 
     private function utc(?DateTimeImmutable $timestamp): ?DateTimeImmutable

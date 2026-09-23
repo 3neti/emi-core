@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use LBHurtado\EmiCore\Actions\Funding\RecordProviderFundingObservation;
 use LBHurtado\EmiCore\Data\Funding\ProviderFundingObservationData;
+use LBHurtado\EmiCore\Data\Funding\ProviderPayerIdentityData;
 use LBHurtado\EmiCore\Exceptions\ImmutableProviderEvidence;
 use LBHurtado\EmiCore\Models\ProviderFundingObservation;
 
@@ -49,6 +50,41 @@ it('records append-only normalized funding observations idempotently', function 
         ->toBe('2026-07-23T01:05:00+00:00')
         ->and($first->settledAtInstant()?->toRfc3339String())
         ->toBe('2026-07-23T01:06:00+00:00');
+});
+
+it('encrypts provider-reported payer identity outside metadata', function () {
+    $observation = app(RecordProviderFundingObservation::class)->handle(
+        settledObservation([
+            'payerIdentity' => new ProviderPayerIdentityData(
+                name: 'Apple Hurtado',
+                accountNumber: '09175180722',
+                institutionCode: 'GXCHPHM2XXX',
+                mobile: null,
+                verificationSource: 'netbank-vca-transaction-history',
+                providerVerified: false,
+            ),
+        ]),
+    );
+    $stored = DB::table('provider_funding_observations')
+        ->where('id', $observation->getKey())
+        ->sole();
+
+    expect($observation->payer_name_ciphertext)->toBe('Apple Hurtado')
+        ->and($observation->payer_account_ciphertext)->toBe('09175180722')
+        ->and($observation->payer_institution_ciphertext)->toBe('GXCHPHM2XXX')
+        ->and($observation->payer_mobile_ciphertext)->toBeNull()
+        ->and($observation->payer_identity_verification_source)
+        ->toBe('netbank-vca-transaction-history')
+        ->and($observation->payer_identity_provider_verified)->toBeFalse()
+        ->and($stored->payer_name_ciphertext)->not->toContain('Apple Hurtado')
+        ->and($stored->payer_account_ciphertext)->not->toContain('09175180722')
+        ->and($stored->payer_institution_ciphertext)->not->toContain('GXCHPHM2XXX')
+        ->and($observation->metadata)->not->toHaveKeys([
+            'payer_name',
+            'payer_account',
+            'payer_institution',
+            'payer_mobile',
+        ]);
 });
 
 it('preserves provider state transitions as separate observations', function () {

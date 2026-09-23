@@ -12,5 +12,8 @@ class ProviderPayerIdentityData extends Data
         public ?string $mobile = null,
         public string $verificationSource = 'provider-observation',
         public bool $providerVerified = false,
+        public ?string $name = null,
+        public ?string $accountNumber = null,
+        public ?string $institutionCode = null,
     ) {}
 }

@@ -7,6 +7,9 @@ use LBHurtado\EmiCore\Data\Funding\ProviderPayerIdentityData;
 
 it('carries optional provider payer identity without making it settlement authority', function () {
     $identity = new ProviderPayerIdentityData(
+        name: 'Apple Hurtado',
+        accountNumber: '09175180722',
+        institutionCode: 'GXCHPHM2XXX',
         mobile: '+639171234567',
         verificationSource: 'simulated-qrph-payer-profile',
         providerVerified: true,
@@ -26,6 +29,9 @@ it('carries optional provider payer identity without making it settlement author
     );
 
     expect($observation->payerIdentity)->toBe($identity)
+        ->and($observation->payerIdentity?->name)->toBe('Apple Hurtado')
+        ->and($observation->payerIdentity?->accountNumber)->toBe('09175180722')
+        ->and($observation->payerIdentity?->institutionCode)->toBe('GXCHPHM2XXX')
         ->and($observation->payerIdentity?->mobile)->toBe('+639171234567')
         ->and($observation->payerIdentity?->providerVerified)->toBeTrue()
         ->and($observation->payerIdentity?->verificationSource)
@@ -46,4 +52,19 @@ it('keeps payer identity optional for existing provider adapters', function () {
     );
 
     expect($observation->payerIdentity)->toBeNull();
+});
+
+it('preserves the original positional constructor contract', function () {
+    $identity = new ProviderPayerIdentityData(
+        '+639171234567',
+        'legacy-provider-observation',
+        true,
+    );
+
+    expect($identity->mobile)->toBe('+639171234567')
+        ->and($identity->verificationSource)->toBe('legacy-provider-observation')
+        ->and($identity->providerVerified)->toBeTrue()
+        ->and($identity->name)->toBeNull()
+        ->and($identity->accountNumber)->toBeNull()
+        ->and($identity->institutionCode)->toBeNull();
 });

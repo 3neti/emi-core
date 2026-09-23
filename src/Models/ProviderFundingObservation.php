@@ -30,6 +30,24 @@ class ProviderFundingObservation extends Model
         'webhook_receipt_id',
         'payload_hash',
         'metadata',
+        'payer_name_ciphertext',
+        'payer_account_ciphertext',
+        'payer_institution_ciphertext',
+        'payer_mobile_ciphertext',
+        'payer_identity_verification_source',
+        'payer_identity_provider_verified',
+    ];
+
+    protected $hidden = [
+        'provider_transaction_id',
+        'provider_operation_id',
+        'request_id',
+        'funding_address',
+        'provider_account_reference',
+        'payer_name_ciphertext',
+        'payer_account_ciphertext',
+        'payer_institution_ciphertext',
+        'payer_mobile_ciphertext',
     ];
 
     protected static function booted(): void
@@ -52,6 +70,11 @@ class ProviderFundingObservation extends Model
             'occurred_at' => 'immutable_datetime',
             'settled_at' => 'immutable_datetime',
             'metadata' => 'array',
+            'payer_name_ciphertext' => 'encrypted',
+            'payer_account_ciphertext' => 'encrypted',
+            'payer_institution_ciphertext' => 'encrypted',
+            'payer_mobile_ciphertext' => 'encrypted',
+            'payer_identity_provider_verified' => 'boolean',
         ];
     }
 
