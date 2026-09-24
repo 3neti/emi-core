@@ -19,5 +19,6 @@ class StandingFundingAddressRequestData extends Data
         public int $derivationCounter = 0,
         public ?string $existingFundingAddress = null,
         public ?FundingQrMerchantData $qrMerchant = null,
+        public ?int $qrAmountMinor = null,
     ) {}
 }
