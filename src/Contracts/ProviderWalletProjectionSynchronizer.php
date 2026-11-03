@@ -6,6 +6,8 @@ namespace LBHurtado\EmiCore\Contracts;
 
 interface ProviderWalletProjectionSynchronizer extends SettlementProviderCapability
 {
+    public function supportsProvider(string $provider): bool;
+
     /** @return array<string, mixed> */
     public function handle(string $walletId, mixed $owner = null): array;
 
