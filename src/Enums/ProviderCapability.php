@@ -8,6 +8,7 @@ enum ProviderCapability: string
 {
     case ReadinessProbe = 'readiness_probe';
     case BalanceRead = 'balance_read';
+    case StatementRead = 'statement_read';
     case FundingEvidenceRead = 'funding_evidence_read';
     case FundingInstructionIssue = 'funding_instruction_issue';
     case StandingFundingAddress = 'standing_funding_address';
