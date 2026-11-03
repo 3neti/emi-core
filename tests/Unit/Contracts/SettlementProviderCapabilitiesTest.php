@@ -5,6 +5,7 @@ declare(strict_types=1);
 use LBHurtado\EmiCore\Contracts\DirectQrFundingInstructionIssuer;
 use LBHurtado\EmiCore\Contracts\FundingInstructionIssuer;
 use LBHurtado\EmiCore\Contracts\FundingProviderAdapter;
+use LBHurtado\EmiCore\Contracts\IncomingPaymentReader;
 use LBHurtado\EmiCore\Contracts\ProviderFundingEvidenceVerifier;
 use LBHurtado\EmiCore\Contracts\SettlementProviderCapability;
 use LBHurtado\EmiCore\Contracts\StandingFundingAddressProvider;
@@ -17,5 +18,6 @@ it('separates provider capabilities without breaking legacy funding adapters', f
         ->and($funding->implementsInterface(ProviderFundingEvidenceVerifier::class))->toBeTrue()
         ->and($funding->hasMethod('authenticateWebhook'))->toBeTrue()
         ->and($funding->implementsInterface(DirectQrFundingInstructionIssuer::class))->toBeFalse()
+        ->and($funding->implementsInterface(IncomingPaymentReader::class))->toBeFalse()
         ->and($standing->implementsInterface(SettlementProviderCapability::class))->toBeTrue();
 });
