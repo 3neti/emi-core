@@ -20,5 +20,6 @@ class FundingVerificationData extends Data
         public ?FundingDestinationData $destination = null,
         public ?DateTimeImmutable $observedAfter = null,
         public ?DateTimeImmutable $observedBefore = null,
+        public bool $allowDestinationHistoryFallback = false,
     ) {}
 }
