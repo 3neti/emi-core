@@ -103,6 +103,7 @@ it('carries reusable qr instructions without granting settlement authority', fun
         'purpose' => 'account_funding',
         'currency' => 'PHP',
         'reusable' => true,
+        'supportsCollisionRetry' => false,
     ])->and($address->toArray())
         ->not->toHaveKeys(['automaticCreditEnabled', 'walletBalance', 'settled']);
 });
