@@ -22,5 +22,6 @@ class StandingFundingAddressData extends Data
         public FundingQrCodeData $qrCode,
         public bool $reusable = true,
         public array $displayData = [],
+        public bool $supportsCollisionRetry = false,
     ) {}
 }
