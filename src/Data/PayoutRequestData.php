@@ -2,6 +2,7 @@
 
 namespace LBHurtado\EmiCore\Data;
 
+use Illuminate\Support\Arr;
 use LBHurtado\EmiCore\Enums\SettlementRail;
 use Spatie\LaravelData\Data;
 
@@ -19,6 +20,8 @@ class PayoutRequestData extends Data
         public ?int $user_id = null,
         public ?string $mobile = null,
         public ?array $metadata = null,
+        public ?PayoutPartyData $sender = null,
+        public ?PayoutPartyData $recipient = null,
     ) {
         // Sanitize account number: strip all non-numeric characters
         $this->account_number = preg_replace('/[^0-9]/', '', $account_number);
@@ -27,5 +30,10 @@ class PayoutRequestData extends Data
     public function getSettlementRail(): SettlementRail
     {
         return SettlementRail::from($this->settlement_rail);
+    }
+
+    public function toAuditArray(): array
+    {
+        return Arr::except($this->toArray(), ['sender', 'recipient']);
     }
 }
