@@ -1,6 +1,15 @@
 <?php
 
 use LBHurtado\EmiCore\Data\PayoutRequestData;
+use LBHurtado\EmiCore\Data\PayoutSourceAccountData;
+
+it('keeps payout source details out of audit data', function () {
+    $data = new PayoutRequestData('ref', 10, '09170000000', 'GXCHPHM2XXX', 'INSTAPAY',
+        source_account: new PayoutSourceAccountData('netbank', '991100001234', '1234'));
+
+    expect($data->source_account->account_number)->toBe('991100001234')
+        ->and($data->toAuditArray())->not->toHaveKey('source_account');
+});
 use LBHurtado\EmiCore\Enums\SettlementRail;
 
 it('can be constructed with required fields', function () {

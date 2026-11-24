@@ -11,5 +11,6 @@ class ProviderSourceAccountReadinessRequestData extends Data
     public function __construct(
         public ?int $requiredAmountMinor = null,
         public bool $provisioning = false,
+        public ?string $sourceAccountNumber = null,
     ) {}
 }

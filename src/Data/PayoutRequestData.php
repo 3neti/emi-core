@@ -22,6 +22,7 @@ class PayoutRequestData extends Data
         public ?array $metadata = null,
         public ?PayoutPartyData $sender = null,
         public ?PayoutPartyData $recipient = null,
+        public ?PayoutSourceAccountData $source_account = null,
     ) {
         // Sanitize account number: strip all non-numeric characters
         $this->account_number = preg_replace('/[^0-9]/', '', $account_number);
@@ -34,6 +35,6 @@ class PayoutRequestData extends Data
 
     public function toAuditArray(): array
     {
-        return Arr::except($this->toArray(), ['sender', 'recipient']);
+        return Arr::except($this->toArray(), ['sender', 'recipient', 'source_account']);
     }
 }
