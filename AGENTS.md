@@ -56,3 +56,6 @@ tests/
 - No HTTP calls — that's the adapter package's job
 - No provider-specific logic — all provider logic lives in adapter packages
 - No controller/route definitions — the adapter or host app provides those
+
+## Current QR Contract
+- Read `docs/QR_ARTIFACT_AND_ON_DEMAND_DECODE.md` before changing funding QR DTOs or optional decode capabilities.

@@ -75,6 +75,23 @@ Normalized money uses integer minor units. Provider references remain opaque,
 and corrections create new normalization revisions instead of rewriting prior
 observations.
 
+### Funding QR artifacts
+
+`FundingQrCodeData::base64Payload` contains the provider-generated QR artifact.
+For NetBank QR Ph funding, this is the Base64-encoded PNG returned by
+`/v1/qrph/generate`; consumers convert it to an image for display. The
+provider's `qr_string` belongs to the separate QR decode flow and is not
+implicitly available in generated funding instructions.
+
+`FundingQrCodeData::displayContent` is an optional provider-neutral value for a
+future provider response that separately supplies machine-readable QR content.
+It must not be populated by decoding or inspecting the PNG, and it must remain
+`null` when the provider does not document such a value and its format.
+
+Providers may additionally expose an explicit on-demand QR decoder through
+`FundingQrCodeDecoder`. Its result contains the decoded QR string and
+provider-confirmed metadata; decoding is never implicit during QR generation.
+
 ## Legacy EMI model surface
 
 The package also contains the original provider-neutral EMI models and

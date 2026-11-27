@@ -15,5 +15,6 @@ class FundingQrCodeData extends Data
         public string $transactionType,
         public bool $embeddedAmount,
         public bool $providerGenerated,
+        public ?FundingQrDisplayContentData $displayContent = null,
     ) {}
 }
